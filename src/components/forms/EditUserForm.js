@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Radio, DatePicker } from 'antd';
+import { Form, Input, Button, Radio, DatePicker, Space } from 'antd';
 import moment from 'moment';
 
 const EditUserForm = (props) => {
@@ -18,25 +18,24 @@ const EditUserForm = (props) => {
         const value = e.target.value;
         setUser({ ...user, [name]: value })
     }
-    // const regex = /^[a-zA-Z]+[a-zA-Z-]*$/;
+
     const regex = {
         "name": /^[a-zA-Z]+[a-zA-Z-]*$/,
-        "emailId": /^([_\-\.0-9a-zA-Z]+)@([_\-\.0-9a-zA-Z]+)\.([a-zA-Z]){2,7}$/,
+        "emailId": /^([_\-0-9a-zA-Z]+)@([_\-0-9a-zA-Z]+)\.([a-zA-Z]){2,7}$/,
         "aadharNumber": /^[0-9]{4}[ -]?[0-9]{4}[ -]?[0-9]{4}$/,
         "panNumber": /[A-Z]{5}[0-9]{4}[A-Z]{1}/,
     };
 
     const conditionsArray = [
-        regex.name.test(user.name), 
+        regex.name.test(user.name),
         regex.emailId.test(user.emailId),
         regex.aadharNumber.test(user.aadharNumber),
         regex.panNumber.test(user.panNumber),
-        user.joiningDate
     ]
 
     const handleSubmit = e => {
         e.preventDefault();
-        if (!conditionsArray.includes(false)) {
+        if (!conditionsArray.includes(false) &&  user.joiningDate) {
             props.updateUser(user);
         }
     }
@@ -44,8 +43,24 @@ const EditUserForm = (props) => {
         console.log('Received values of form: ', values);
     };
 
+    const tailLayout = {
+        wrapperCol: {
+            offset: 6,
+            span: 16,
+        },
+    };
+    const layout = {
+        labelCol: {
+          span: 8,
+        },
+        wrapperCol: {
+          span: 16,
+        },
+      };
+
     return (
         <Form
+            {...layout}
             onFinish={onFinish}
             style={{ marginTop: 40 }}
             labelCol={{
@@ -144,9 +159,11 @@ const EditUserForm = (props) => {
                     format={dateFormat}
                     onChange={(date, dateString) => handelDateChange(date, dateString)} />
             </Form.Item>
-            <Form.Item style={{ textAlign: "center" }}>
-                <Button htmlType="submit" type="primary" onClick={handleSubmit} >Save</Button>
-                <Button htmlType="submit" type="danger" onClick={props.onCancel} >Cancel</Button>
+            <Form.Item {...tailLayout}>
+                <Space>
+                    <Button htmlType="submit" type="primary" onClick={handleSubmit} >Save</Button>
+                    <Button htmlType="submit" type="danger" onClick={props.onCancel} >Cancel</Button>
+                </Space>
             </Form.Item>
         </Form>
     )
